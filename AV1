@@ -1,0 +1,39 @@
+import liwc
+
+arquivo = open('arquivo.txt')
+linhas = arquivo.readlines()
+texto=""
+swear = 0 
+anx = 0 
+posemo = 0
+negemo = 0
+for linha in linhas:  
+  carecteresespeciais="!#$&^&*(),-."
+  for carecter in carecteresespeciais:
+    linha = linha.replace(carecter,'')
+  linha = linha.lower()
+  texto = texto + linha
+palavras = texto.split()
+qtspalavras = len(palavras)
+print("Total de palavras:", qtspalavras)
+  
+
+
+parse, category_names = liwc.load_token_parser("LIWC2007_Portugues_win.dic.txt")
+for palavra in palavras:
+  resp = list(parse(palavra))  
+  for tipo in resp: 
+    if tipo == 'swear':
+      swear = swear + 1
+    if tipo == 'anx':
+      anx = anx + 1
+    if tipo == 'posemo':
+      posemo = posemo + 1   
+    if tipo == 'negemo':
+      negemo = negemo + 1     
+print("Palavras de ansiedade: ", anx)
+print("Palavras ofensivas: ", swear)
+posemo = posemo*100/qtspalavras
+print(f'Tom geral positivo: {posemo:.2f}%')
+negemo = negemo*100/qtspalavras
+print(f'Tom geral negativo: {negemo:.2f}%')
