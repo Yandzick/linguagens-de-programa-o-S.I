@@ -1,0 +1,66 @@
+import liwc
+from TwitterSearch import *
+try:
+
+    ts = TwitterSearch(
+        consumer_key = 'keTFlM8jC4E7FW69AVcskWaHH',
+        consumer_secret = 'KBBd9wOsWl5oqttD4cqBkl2XFzHPgFGgppxoVD08iSaKFvXIwC',
+        access_token = '2679703382-VkWZoKm34ejhwN7JSiOPWYEZaSEwC5w7osdjmgC',
+        access_token_secret = 'wupLqG0Gt5IpjtHxRTPxuNNiWBVvlq1IB5uxbvVnLifa8'
+     )
+
+    tso = TwitterSearchOrder()
+    tso.set_keywords(['python'])
+    tso.set_language('pt')
+
+    for tweet in ts.search_tweets_iterable(tso):
+        arquivo=tweet['text']             
+        
+    texto=""
+    swear = 0 
+    anx = 0 
+    posemo = 0
+    negemo = 0
+    for linha in arquivo:  
+      carecteresespeciais="!#$&^&*(),-."
+      for carecter in carecteresespeciais:
+        linha = linha.replace(carecter,'')
+      linha = linha.lower()      
+      texto = texto + linha
+    palavras = texto.split()
+    qtspalavras = len(palavras)
+    print("Total de palavras:", qtspalavras)
+  
+
+
+    parse, category_names = liwc.load_token_parser("LIWC2007_Portugues_win.dic.txt")
+    for palavra in palavras:
+      resp = list(parse(palavra))  
+      for tipo in resp: 
+        if tipo == 'swear':
+          swear = swear + 1
+        if tipo == 'anx':
+          anx = anx + 1
+        if tipo == 'posemo':
+          posemo = posemo + 1   
+        if tipo == 'negemo':
+          negemo = negemo + 1     
+    print("Palavras de ansiedade: ", anx)
+    print("Palavras ofensivas: ", swear)
+    posemo = posemo*100/qtspalavras
+    print(f'Tom geral positivo: {posemo:.2f}%')
+    negemo = negemo*100/qtspalavras
+    print(f'Tom geral negativo: {negemo:.2f}%')
+
+
+except TwitterSearchException as e:
+    print(e)
+
+
+
+
+
+  
+
+
+
