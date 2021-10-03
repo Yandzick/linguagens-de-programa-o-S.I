@@ -1,0 +1,59 @@
+import liwc
+from functools import reduce
+def token(linhas):
+  texto=""
+  palavras = ""
+  for linha in linhas:  
+      carecteresespeciais="!#$&^&*(),-."
+      for carecter in carecteresespeciais:
+        linha = linha.replace(carecter,'')
+      linha = linha.lower()
+      texto = texto + linha
+  palavras = texto.split()
+  return palavras
+def classificacao(token):
+      textocompl = ""
+      parse, category_names =liwc.load_token_parser("LIWC2007_Portugues_win.dic.txt")
+      for palavra in token:
+        resp = list(parse(palavra)) 
+        textocompl = list(textocompl) + resp
+      return textocompl
+def swear(resp):
+  swear = [] 
+  for tipo in resp:
+    if tipo == 'swear':
+      swear.append(1) 
+  total_swear = reduce(soma, swear)
+  return total_swear
+def anx(resp):
+    anx = []
+    for tipo in resp:
+      if tipo == 'anx':
+        anx.append(1) 
+    total_anx = reduce(soma,anx)
+    return total_anx 
+def posemo(resp):
+    posemo = [] 
+    for tipo in resp:
+      if tipo == 'posemo':
+        posemo.append(1) 
+    total_posemo = reduce(soma,posemo)
+    return total_posemo 
+def negemo(resp):
+    negemo = [] 
+    for tipo in resp:
+      if tipo == 'negemo':
+        negemo.append(1) 
+    total_negemo = reduce(soma,negemo)
+    return total_negemo  
+def soma(x,y):
+  return x+y
+arquivo = open('arquivo.txt')
+linhas = arquivo.readlines()
+token = token(linhas)
+resp = classificacao(token)
+print("Total de palavras:", len(token))
+print("Palavras de ansiedade: ", anx(resp))
+print("Palavras ofensivas: ", swear(resp))
+print(f'Tom geral positivo: {posemo(resp)*100/len(token):.2f}%')
+print(f'Tom geral negativo: {negemo(resp)*100/len(token):.2f}%')
