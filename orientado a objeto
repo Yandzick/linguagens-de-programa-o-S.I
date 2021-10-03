@@ -1,0 +1,100 @@
+import liwc
+
+class stringReader:
+  texto=""
+  palavras = ""
+  def __init__(self,linhas):
+    self.linhas = linhas
+    
+  
+  def linhasGet(self):
+    return self.linhas
+
+  def linhasSet(self,linhas):
+    self.linhas = linhas
+
+  def textoGet(self):
+    return self.texto
+
+  def textoSet(self,texto):
+    self.texto = texto
+
+  def palavrasGet(self):
+    return self.palavras
+
+  def palavrasSet(self,palavras):
+    self.palavras = palavras
+   
+  def tokens(self):
+    for linha in linhas:  
+      carecteresespeciais="!#$&^&*(),-."
+      for carecter in carecteresespeciais:
+        linha = linha.replace(carecter,'')
+      linha = linha.lower()
+      self.texto = self.texto + linha
+    self.palavras = self.texto.split()
+    return self.palavras
+
+class tokenManipulator:
+    resp = ""
+    def __init__(self,token):
+      self.token = token
+
+    def tokenGet(self):
+      return self.token
+
+    def tokenSet(self,token):
+      self.token = token
+      
+    def respGet(self):
+      return self.resp
+
+    def respSet(self,resp):
+      self.resp = resp
+    def classificacao(self,token):
+      textocompl = ""
+      parse, category_names =       liwc.load_token_parser("LIWC2007_Portugues_win.dic.txt")
+      for palavra in token:
+        self.resp = list(parse(palavra)) 
+        textocompl = list(textocompl) + self.resp
+      return textocompl
+    def swear(self,resp):
+      swear = 0 
+      for tipo in resp:
+        if tipo == 'swear':
+          swear = swear + 1 
+      return swear
+    def anx(self,resp):
+      anx = 0 
+      for tipo in resp:
+        if tipo == 'anx':
+          anx = anx + 1 
+      return anx 
+    def posemo(self,resp):
+      posemo = 0 
+      for tipo in resp:
+        if tipo == 'posemo':
+          posemo = posemo + 1 
+      return posemo 
+    def negemo(self,resp):
+      negemo = 0 
+      for tipo in resp:
+        if tipo == 'negemo':
+          negemo = negemo + 1 
+      return negemo       
+
+arquivo = open('arquivo.txt')
+linhas = arquivo.readlines()
+stringReader(linhas)
+token = stringReader.tokens(stringReader)
+resp = tokenManipulator.classificacao(tokenManipulator,token)
+print("Total de palavras:", len(token))
+print("Palavras de ansiedade: ", tokenManipulator.anx(tokenManipulator,resp))
+print("Palavras ofensivas: ", tokenManipulator.swear(tokenManipulator,resp))
+posemo = tokenManipulator.posemo(tokenManipulator,resp)*100/len(token)
+print(f'Tom geral positivo: {posemo:.2f}%')
+negemo = tokenManipulator.negemo(tokenManipulator,resp)*100/len(token)
+print(f'Tom geral negativo: {negemo:.2f}%')
+
+
+
