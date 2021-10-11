@@ -3,7 +3,7 @@ import liwc
 class stringReader:
   texto=""
   palavras = ""
-  def __init__(self,linhas):
+  def _init_(self,linhas):
     self.linhas = linhas
     
   
@@ -37,7 +37,7 @@ class stringReader:
 
 class tokenManipulator:
     resp = ""
-    def __init__(self,token):
+    def _init_(self,token):
       self.token = token
 
     def tokenGet(self):
@@ -51,6 +51,7 @@ class tokenManipulator:
 
     def respSet(self,resp):
       self.resp = resp
+
     def classificacao(self,token):
       textocompl = ""
       parse, category_names =       liwc.load_token_parser("LIWC2007_Portugues_win.dic.txt")
@@ -81,7 +82,32 @@ class tokenManipulator:
       for tipo in resp:
         if tipo == 'negemo':
           negemo = negemo + 1 
-      return negemo       
+      return negemo 
+
+class specialTokenManipulator(tokenManipulator):
+  def _init_(self,resp,token):
+        super()._init_(resp,token)
+  arquivo = open('arquivo.txt')
+  linhas = arquivo.readlines()    
+  
+  def palavras():
+    texto=""
+    palavras = ""
+    for linha in linhas:  
+      carecteresespeciais="!#$&^&*(),-."
+      for carecter in carecteresespeciais:
+        linha = linha.replace(carecter,'')
+      linha = linha.lower()
+      texto = texto + linha
+    palavras = texto.split()   
+    return palavras
+  def classificacao(palavras):    
+    textocompl = ""
+    parse, category_names =       liwc.load_token_parser("LIWC2007_Portugues_win.dic.txt")
+    for palavra in palavras:
+      resp = list(parse(palavra)) 
+      textocompl = list(textocompl) + resp
+    return textocompl
 
 arquivo = open('arquivo.txt')
 linhas = arquivo.readlines()
@@ -95,6 +121,13 @@ posemo = tokenManipulator.posemo(tokenManipulator,resp)*100/len(token)
 print(f'Tom geral positivo: {posemo:.2f}%')
 negemo = tokenManipulator.negemo(tokenManipulator,resp)*100/len(token)
 print(f'Tom geral negativo: {negemo:.2f}%')
-
-
-
+print("=======================")
+specialtoken = specialTokenManipulator.palavras()
+resp = specialTokenManipulator.classificacao(specialtoken)
+print("Total de palavras:", len(specialtoken))
+print("Palavras de ansiedade: ", specialTokenManipulator.anx(specialTokenManipulator,resp))
+print("Palavras ofensivas: ", specialTokenManipulator.swear(specialTokenManipulator,resp))
+posemo = specialTokenManipulator.posemo(specialTokenManipulator,resp)*100/len(token)
+print(f'Tom geral positivo: {posemo:.2f}%')
+negemo = specialTokenManipulator.negemo(specialTokenManipulator,resp)*100/len(token)
+print(f'Tom geral negativo: {negemo:.2f}%')
