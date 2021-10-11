@@ -1,22 +1,23 @@
 import liwc
 from functools import reduce
 def token(linhas):
-  texto=""
-  palavras = ""
+  texto=[]
   for linha in linhas:  
       carecteresespeciais="!#$&^&*(),-."
       for carecter in carecteresespeciais:
-        linha = linha.replace(carecter,'')
+        linha = linha.replace(carecter,'')       
       linha = linha.lower()
-      texto = texto + linha
-  palavras = texto.split()
+      texto.append(linha)
+  textocompleto = reduce(junta, texto)
+  palavras = textocompleto.split()
   return palavras
 def classificacao(token):
-      textocompl = ""
+      addresp = []
       parse, category_names =liwc.load_token_parser("LIWC2007_Portugues_win.dic.txt")
       for palavra in token:
         resp = list(parse(palavra)) 
-        textocompl = list(textocompl) + resp
+        addresp.append(resp)
+      textocompl = reduce(junta, addresp)
       return textocompl
 def swear(resp):
   swear = [] 
@@ -48,6 +49,8 @@ def negemo(resp):
     return total_negemo  
 def soma(x,y):
   return x+y
+def junta(a,b):
+  return a+b
 arquivo = open('arquivo.txt')
 linhas = arquivo.readlines()
 token = token(linhas)
